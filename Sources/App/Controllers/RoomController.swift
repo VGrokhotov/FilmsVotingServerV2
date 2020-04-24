@@ -15,7 +15,7 @@ final class RoomController {
     //MARK: GET
     
     func all(_ req: Request) throws -> EventLoopFuture<[Room]> {
-        return Room.query(on: req.db(.psql)).all()
+        return Room.query(on: req.db).all()
     }
     
 //    func showUsingName(_ req: Request) throws -> EventLoopFuture<Room>{
@@ -39,7 +39,7 @@ final class RoomController {
     func showUsingId(_ req: Request) throws -> EventLoopFuture<Room> {
         if let id = req.parameters.get("roomID", as: UUID.self) {
             var flag = true
-            let room = Room.find(id, on: req.db(.psql)).map { (room) -> (Room) in
+            let room = Room.find(id, on: req.db).map { (room) -> (Room) in
                 if let room = room {
                     return room
                 } else {
@@ -67,7 +67,7 @@ final class RoomController {
     
     func create(_ req: Request) throws -> EventLoopFuture<Room> {
         let room = try req.content.decode(Room.self)
-        return room.create(on: req.db(.psql)).map { room }
+        return room.create(on: req.db).map { room }
     }
     
     
