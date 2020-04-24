@@ -18,50 +18,24 @@ final class RoomController {
         return Room.query(on: req.db).all()
     }
     
-//    func showUsingName(_ req: Request) throws -> EventLoopFuture<Room>{
-//        if let name = req.parameters.get("name") {
-//            return req.withPooledConnection(to: .psql) { connection in
-//                return connection.select()
-//                    .all().from(Room.self)
-//                    .where(\Room.name == name)
-//                    .all(decoding: Room.self).map { rows in
-//                        if rows.count == 0{
-//                            throw RoutingError.init(identifier: "404", reason: "There is no room with login \(name)")
-//                        } else {
-//                            return rows[0]
-//                        }
-//                }
-//            }
-//        }
-//
-//    }
+    func showUsingName(_ req: Request) throws -> EventLoopFuture<Room>{
+        if let name = req.parameters.get("name", as: String.self) {
+        
+            return Room.query(on: req.db)
+                .filter(\.$name == name)
+                .first()
+                .unwrap(or: Abort.init(.notFound))
+        }
+
+    }
     
     func showUsingId(_ req: Request) throws -> EventLoopFuture<Room> {
         if let id = req.parameters.get("roomID", as: UUID.self) {
-            var flag = true
-            let room = Room.find(id, on: req.db).map { (room) -> (Room) in
-                if let room = room {
-                    return room
-                } else {
-                    flag = false
-                    return Room()
-                }
-            }
-            if flag {
-                return room
-            }
-//            let ourRoom = try? room.wait()
-//
-//            if let _ = ourRoom?.id {
-//                return room
-//            }
-            throw Abort.init(.notFound)
+            return Room.find(id, on: req.db).unwrap(or: Abort.init(.notFound))
         }
         throw Abort.init(.notFound)
     }
-    
-    
-    
+
     
     //MARK: POST
     
@@ -73,24 +47,40 @@ final class RoomController {
     
     //MARK: PUT
     
-//    func update(_ req: Request) throws -> EventLoopFuture<Room> {
-//        return try flatMap(to: Room.self, req.parameters.next(Room.self), req.content.decode(Room.self)) { room, updatedRoom in
-//            room.name = updatedRoom.name
-////            room.password = updatedRoom.password
-////            room.creatorID = updatedRoom.creatorID
-//            room.isVotingAvailable = updatedRoom.isVotingAvailable
-//            room.users = updatedRoom.users
-//            return room.save(on: req)
-//        }
-//    }
+func update(_ req: Request) throws -> EventLoopFuture<Room> {
+    
+    if let id = req.parameters.get("roomID", as: UUID.self) {
+
+        let updatedRoom = try? req.content.decode(Room.self)
+            
+        if let updatedRoom = updatedRoom{
+            return Room.find(id, on: req.db).unwrap(or: Abort.init(.notFound)).map { (room) in
+                room.isVotingAvailable = updatedRoom.isVotingAvailable
+                room.users = updatedRoom.users
+                let _ = room.save(on: req.db)
+                return room
+            }
+        }
+        
+        throw Abort.init(.noContent)
+    }
+
+    throw Abort.init(.notFound)
+}
     
     
     //MARK: DELETE
     
-//    func delete(_ req: Request) throws -> EventLoopFuture<HTTPStatus> {
-//        return try req.parameters.next(Room.self).flatMap(to: Void.self) { room in
-//            return room.delete(on: req)
-//        }.transform(to: .ok)
-//    }
+    func delete(_ req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        if let id = req.parameters.get("roomID", as: UUID.self) {
+            let room = Room.find(id, on: req.db).unwrap(or: Abort.init(.notFound))
+            
+            return room.flatMap { (room) in
+                return room.delete(on: req.db)
+            }.transform(to: .ok)
+            
+        }
+        throw Abort.init(.notFound)
+    }
     
 }

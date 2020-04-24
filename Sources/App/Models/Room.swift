@@ -25,17 +25,17 @@ final class Room: Model, Content{
     var password: String
     
     @Field(key: "creatorID")
-    var creatorID: Int
+    var creatorID: UUID
     
     @Field(key: "isVotingAvailable")
     var isVotingAvailable: Bool
     
     @Field(key: "users")
-    var users: [Int]
+    var users: [UUID]
     
     init() { }
     
-    init(id: UUID? = nil, name: String, password: String, creatorID: Int, isVotingAvailable: Bool = false, users: [Int] = []) {
+    init(id: UUID? = nil, name: String, password: String, creatorID: UUID, isVotingAvailable: Bool = false, users: [UUID] = []) {
         self.id = id
         self.name = name
         self.password = password
@@ -52,9 +52,9 @@ struct CreateRoom: Migration {
             .id()
             .field("name", .string)
             .field("password", .string)
-            .field("creatorID", .int)
+            .field("creatorID", .uuid)
             .field("isVotingAvailable", .bool)
-            .field("users", .array(of: .int))
+            .field("users", .array(of: .uuid))
             .create()
     }
 
