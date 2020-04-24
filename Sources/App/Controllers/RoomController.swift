@@ -26,7 +26,8 @@ final class RoomController {
                 .first()
                 .unwrap(or: Abort.init(.notFound))
         }
-
+        
+        throw Abort.init(.notFound)
     }
     
     func showUsingId(_ req: Request) throws -> EventLoopFuture<Room> {
