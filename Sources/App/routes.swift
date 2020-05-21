@@ -93,5 +93,6 @@ func routes(_ app: Application) throws {
     app.put("rooms", ":roomID", use: roomController.update)
     app.delete("rooms", ":roomID", use: roomController.delete)
     
+    app.webSocket("rooms", "socket", onUpgrade: roomController.onUpgrade)
     
 }

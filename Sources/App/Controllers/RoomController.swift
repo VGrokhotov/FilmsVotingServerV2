@@ -12,6 +12,8 @@ import FluentPostgresDriver
 
 final class RoomController {
     
+    var connections: [WebSocket] = []
+    
     //MARK: GET
     
     func all(_ req: Request) throws -> EventLoopFuture<[Room]> {
@@ -42,7 +44,14 @@ final class RoomController {
     
     func create(_ req: Request) throws -> EventLoopFuture<Room> {
         let room = try req.content.decode(Room.self)
-        return room.create(on: req.db).map { room }
+        let event = room.create(on: req.db).map { room }
+        let _ = event.map { (room) -> (Room) in
+            for ws in self.connections {
+                ws.send(room.toStringJSON())
+            }
+            return room
+        }
+        return event
     }
     
     
@@ -82,6 +91,26 @@ final class RoomController {
             
         }
         throw Abort.init(.notFound)
+    }
+    
+    //MARK: WebSocket
+    
+    func onUpgrade(_ req: Request, ws: WebSocket) {
+        
+        ws.onText { ws, string in
+            switch(string){
+            case "Connect":
+                self.connections.append(ws)
+                break
+            case "Disconnect":
+                if let index = self.connections.firstIndex(where: {$0 === ws}) {
+                    self.connections.remove(at: index)
+                }
+                break
+            default:
+                break
+            }
+        }
     }
     
 }

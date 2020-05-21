@@ -63,3 +63,11 @@ struct CreateRoom: Migration {
         database.schema("rooms").delete()
     }
 }
+
+extension Room {
+    func toStringJSON() -> String {
+        return  """
+        {"id": "\(id!)", "name": "\(name)", "password": "\(password)", "creatorID": "\(creatorID)", "isVotingAvailable": \(isVotingAvailable), "users": \(users)}
+        """
+    }
+}
