@@ -70,4 +70,12 @@ extension Room {
         {"id": "\(id!)", "name": "\(name)", "password": "\(password)", "creatorID": "\(creatorID)", "isVotingAvailable": \(isVotingAvailable), "users": \(users)}
         """
     }
+    
+    func toSecurityStringJSON() -> String {
+        return  """
+        {"id": "\(id!)", "name": "\(name)"}
+        """
+    }
 }
+
+// MARK: TODO по хорошему нужно гетом отправлять только индификаторы и имя 

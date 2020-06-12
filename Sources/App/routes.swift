@@ -28,7 +28,7 @@ func routes(_ app: Application) throws {
                 POST /users - create user
 
                 PUT /users/<user_id> - update user with UUID id user_id
-                You can not update user_login
+                You can only update user_name and user_password
 
                 DELETE /users/<user_id> - delete user with UUID id user_id
 
@@ -85,6 +85,7 @@ func routes(_ app: Application) throws {
     // Configuring a controller
 
     let roomController = RoomController()
+    let userController = UserController()
     
     app.get("rooms", use: roomController.all)
     app.get("rooms", "name", ":name", use: roomController.showUsingName)
@@ -95,4 +96,10 @@ func routes(_ app: Application) throws {
     
     app.webSocket("rooms", "socket", onUpgrade: roomController.onUpgrade)
     
+    app.get("users", use: userController.all)
+    app.get("users", "login", ":login", use: userController.showUsingLogin)
+    app.get("users", ":userID", use: userController.showUsingId)
+    app.post("users", use: userController.create)
+    app.put("users", ":userID", use: userController.update)
+    app.delete("users", ":userID", use: userController.delete)
 }
