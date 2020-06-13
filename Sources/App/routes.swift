@@ -79,6 +79,7 @@ func routes(_ app: Application) throws {
                 You can only update option_vote
 
                 DELETE /options/<option_id> - delete option with UUID id options_id
+                DELETE /options/room/<room_id> - delete all options with UUID id room_id
         """
     }
 
@@ -86,6 +87,7 @@ func routes(_ app: Application) throws {
 
     let roomController = RoomController()
     let userController = UserController()
+    let optionController = OptionController()
     
     app.get("rooms", use: roomController.all)
     app.get("rooms", "name", ":name", use: roomController.showUsingName)
@@ -102,4 +104,14 @@ func routes(_ app: Application) throws {
     app.post("users", use: userController.create)
     app.put("users", ":userID", use: userController.update)
     app.delete("users", ":userID", use: userController.delete)
+    
+    app.get("options", use: optionController.all)
+    app.get("options", "room", ":roomID", use: optionController.showUsingRoomID)
+    app.get("options", ":optionID", use: optionController.showUsingId)
+    app.post("options", use: optionController.create)
+    app.put("options", ":optionID", use: optionController.update)
+    app.delete("options", ":optionID", use: optionController.delete)
+    app.delete("options", "room", ":roomID", use: optionController.deleteAllWithRoomID)
+    
+    app.webSocket("options", "socket", onUpgrade: optionController.onUpgrade)
 }

@@ -17,6 +17,7 @@ public func configure(_ app: Application) throws {
     // Configure migrations
     app.migrations.add(CreateRoom())
     app.migrations.add(CreateUser())
+    app.migrations.add(CreateOption())
     try app.autoMigrate().wait()
     
     // register routes
