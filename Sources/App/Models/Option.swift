@@ -30,7 +30,7 @@ final class Option: Model, Content{
     
     init() { }
     
-    init(id: UUID? = nil, content: String, roomID: UUID, vote: Int) {
+    init(id: UUID? = nil, content: String, roomID: UUID, vote: Int = 0) {
         self.id = id
         self.content = content
         self.roomID = roomID
