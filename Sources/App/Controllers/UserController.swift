@@ -22,10 +22,19 @@ final class UserController {
     func showUsingLogin(_ req: Request) throws -> EventLoopFuture<User>{
         if let login = req.parameters.get("login", as: String.self) {
             
+            let notVerifiedUser = try req.content.decode(NotVerifiedUser.self)
+            
             return User.query(on: req.db)
                 .filter(\.$login == login)
                 .first()
                 .unwrap(or: Abort.init(.notFound))
+                .flatMapThrowing { (user) -> User in
+                    if user.password != notVerifiedUser.password {
+                        throw Abort.init(HTTPResponseStatus.init(statusCode: 400, reasonPhrase: "Wrong user password"))
+                    }
+                    return user
+            }
+    
         }
         
         throw Abort.init(.notFound)
