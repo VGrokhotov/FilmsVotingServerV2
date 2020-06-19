@@ -99,9 +99,9 @@ func routes(_ app: Application) throws {
     app.webSocket("rooms", "socket", onUpgrade: roomController.onUpgrade)
     
     app.get("users", use: userController.all)
-    app.get("users", "login", ":login", use: userController.showUsingLogin)
     app.get("users", ":userID", use: userController.showUsingId)
     app.post("users", use: userController.create)
+    app.post("users", "login", use: userController.showUsingLogin)
     app.put("users", ":userID", use: userController.update)
     app.delete("users", ":userID", use: userController.delete)
     

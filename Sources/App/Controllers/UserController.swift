@@ -19,29 +19,6 @@ final class UserController {
         return User.query(on: req.db).all()
     }
     
-    func showUsingLogin(_ req: Request) throws -> EventLoopFuture<User>{
-        if let login = req.parameters.get("login", as: String.self) {
-            
-            guard let password = req.query[String.self, at: "password"] else {
-                throw Abort.init(HTTPResponseStatus.custom(code: 400, reasonPhrase: "Wrong user password"))
-            }
-            
-            return User.query(on: req.db)
-                .filter(\.$login == login)
-                .first()
-                .unwrap(or: Abort.init(HTTPResponseStatus.custom(code: 404, reasonPhrase: "Cannot find user with such login")))
-                .flatMapThrowing { (user) -> User in
-                    if user.password != password {
-                        throw Abort.init(HTTPResponseStatus.custom(code: 400, reasonPhrase: "Wrong user password"))
-                    }
-                    return user
-            }
-    
-        }
-        
-        throw Abort.init(.badRequest)
-    }
-    
     func showUsingId(_ req: Request) throws -> EventLoopFuture<User> {
         if let id = req.parameters.get("userID", as: UUID.self) {
             return User.find(id, on: req.db).unwrap(or: Abort.init(.notFound))
@@ -57,6 +34,21 @@ final class UserController {
         return user.create(on: req.db).map { user }
     }
     
+    func showUsingLogin(_ req: Request) throws -> EventLoopFuture<User>{
+        
+        let notVerifiedUser = try req.content.decode(NotVerifiedUser.self)
+        
+        return User.query(on: req.db)
+            .filter(\.$login == notVerifiedUser.login)
+            .first()
+            .unwrap(or: Abort.init(HTTPResponseStatus.custom(code: 404, reasonPhrase: "Cannot find user with such login")))
+            .flatMapThrowing { (user) -> User in
+                if user.password != notVerifiedUser.password {
+                    throw Abort.init(HTTPResponseStatus.custom(code: 400, reasonPhrase: "Wrong user password"))
+                }
+                return user
+        }
+    }
     
     //MARK: PUT
     

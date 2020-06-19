@@ -63,5 +63,6 @@ extension User {
 }
 
 struct NotVerifiedUser: Codable {
+    let login: String
     let password: String
 }
