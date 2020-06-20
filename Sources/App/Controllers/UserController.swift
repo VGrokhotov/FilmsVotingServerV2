@@ -36,14 +36,14 @@ final class UserController {
     
     func showUsingLogin(_ req: Request) throws -> EventLoopFuture<User>{
         
-        let notVerifiedUser = try req.content.decode(NotVerifiedUser.self)
+        let authorizationUser = try req.content.decode(AuthorizationUser.self)
         
         return User.query(on: req.db)
-            .filter(\.$login == notVerifiedUser.login)
+            .filter(\.$login == authorizationUser.login)
             .first()
             .unwrap(or: Abort.init(HTTPResponseStatus.custom(code: 404, reasonPhrase: "Cannot find user with such login")))
             .flatMapThrowing { (user) -> User in
-                if user.password != notVerifiedUser.password {
+                if user.password != authorizationUser.password {
                     throw Abort.init(HTTPResponseStatus.custom(code: 400, reasonPhrase: "Wrong user password"))
                 }
                 return user
