@@ -89,7 +89,8 @@ func routes(_ app: Application) throws {
     let userController = UserController()
     let optionController = OptionController()
     
-    app.get("rooms", use: roomController.all)
+    app.get("allrooms", use: roomController.all)
+    app.get("rooms", use: roomController.allWithoutValidation)
     app.get("rooms", "name", ":name", use: roomController.showUsingName)
     app.get("rooms", ":roomID", use: roomController.showUsingId)
     app.post("rooms", use: roomController.create)

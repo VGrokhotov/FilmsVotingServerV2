@@ -20,6 +20,17 @@ final class RoomController {
         return Room.query(on: req.db).all()
     }
     
+    func allWithoutValidation(_ req: Request) throws -> EventLoopFuture<[NotValidatedRoom]> {
+        return Room.query(on: req.db).all().map { (rooms) -> [NotValidatedRoom] in
+            var notValidatedRooms = [NotValidatedRoom]()
+            for room in rooms {
+                let notValidatedRoom = NotValidatedRoom(name: room.name, id: room.id)
+                notValidatedRooms.append(notValidatedRoom)
+            }
+            return notValidatedRooms
+        }
+    }
+    
     func showUsingName(_ req: Request) throws -> EventLoopFuture<Room>{
         if let name = req.parameters.get("name", as: String.self) {
             

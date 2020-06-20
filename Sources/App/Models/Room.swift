@@ -79,3 +79,8 @@ extension Room {
 }
 
 // MARK: TODO по хорошему нужно гетом отправлять только индификаторы и имя 
+
+struct NotValidatedRoom: Content {
+    let name: String
+    var id: UUID?
+}
