@@ -20,11 +20,11 @@ final class RoomController {
         return Room.query(on: req.db).all()
     }
     
-    func allWithoutValidation(_ req: Request) throws -> EventLoopFuture<[NotValidatedRoom]> {
-        return Room.query(on: req.db).all().map { (rooms) -> [NotValidatedRoom] in
-            var notValidatedRooms = [NotValidatedRoom]()
+    func allWithoutValidation(_ req: Request) throws -> EventLoopFuture<[NotVerifiedRoom]> {
+        return Room.query(on: req.db).all().map { (rooms) -> [NotVerifiedRoom] in
+            var notValidatedRooms = [NotVerifiedRoom]()
             for room in rooms {
-                let notValidatedRoom = NotValidatedRoom(name: room.name, id: room.id)
+                let notValidatedRoom = NotVerifiedRoom(id: room.id, name: room.name)
                 notValidatedRooms.append(notValidatedRoom)
             }
             return notValidatedRooms
@@ -58,7 +58,7 @@ final class RoomController {
         let event = room.create(on: req.db).map { room }
         let _ = event.map { (room) -> (Room) in
             for ws in self.connections {
-                ws.send(room.toStringJSON())
+                ws.send(room.toNotVerifiedRoomStringJSON())
             }
             return room
         }

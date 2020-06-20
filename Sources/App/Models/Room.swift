@@ -71,7 +71,7 @@ extension Room {
         """
     }
     
-    func toSecurityStringJSON() -> String {
+    func toNotVerifiedRoomStringJSON() -> String {
         return  """
         {"id": "\(id!)", "name": "\(name)"}
         """
@@ -80,7 +80,7 @@ extension Room {
 
 // MARK: TODO по хорошему нужно гетом отправлять только индификаторы и имя 
 
-struct NotValidatedRoom: Content {
+struct NotVerifiedRoom: Content {
+    let id: UUID?
     let name: String
-    var id: UUID?
 }
