@@ -84,3 +84,8 @@ struct NotVerifiedRoom: Content {
     let id: UUID?
     let name: String
 }
+
+struct AuthorizationRoom: Codable {
+    let id: UUID?
+    let password: String
+}

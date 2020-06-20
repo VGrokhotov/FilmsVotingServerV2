@@ -43,13 +43,6 @@ final class RoomController {
         throw Abort.init(.notFound)
     }
     
-    func showUsingId(_ req: Request) throws -> EventLoopFuture<Room> {
-        if let id = req.parameters.get("roomID", as: UUID.self) {
-            return Room.find(id, on: req.db).unwrap(or: Abort.init(.notFound))
-        }
-        throw Abort.init(.notFound)
-    }
-    
     
     //MARK: POST
     
@@ -63,6 +56,21 @@ final class RoomController {
             return room
         }
         return event
+    }
+    
+    func showUsingId(_ req: Request) throws -> EventLoopFuture<Room>{
+        
+        let authorizationRoom = try req.content.decode(AuthorizationRoom.self)
+        
+        return Room
+            .find(authorizationRoom.id, on: req.db)
+            .unwrap(or: Abort.init(HTTPResponseStatus.custom(code: 404, reasonPhrase: "Cannot find this room, try to refresh Room's list")))
+            .flatMapThrowing { (room) -> Room in
+                if room.password != authorizationRoom.password {
+                    throw Abort.init(HTTPResponseStatus.custom(code: 400, reasonPhrase: "Wrong room password"))
+                }
+                return room
+        }
     }
     
     
