@@ -20,16 +20,6 @@ final class OptionController {
         return Option.query(on: req.db).all()
     }
     
-    func showUsingRoomID(_ req: Request) throws -> EventLoopFuture<[Option]>{
-        if let roomID = req.parameters.get("roomID", as: UUID.self) {
-            
-            return Option.query(on: req.db)
-                .filter(\.$roomID == roomID).all()
-        }
-        
-        throw Abort.init(.notFound)
-    }
-    
     func showUsingId(_ req: Request) throws -> EventLoopFuture<Option> {
         if let id = req.parameters.get("optionID", as: UUID.self) {
             return Option.find(id, on: req.db).unwrap(or: Abort.init(.notFound))
@@ -55,6 +45,13 @@ final class OptionController {
         return event
     }
     
+    func showUsingRoomID(_ req: Request) throws -> EventLoopFuture<[Option]> {
+        
+        let optionSelector = try req.content.decode(OptionSelector.self)
+        
+        return Option.query(on: req.db)
+            .filter(\.$roomID == optionSelector.roomID).all()
+    }
     
     //MARK: PUT
     

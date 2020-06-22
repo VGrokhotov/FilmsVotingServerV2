@@ -107,8 +107,8 @@ func routes(_ app: Application) throws {
     app.delete("users", ":userID", use: userController.delete)
     
     app.get("options", use: optionController.all)
-    app.get("options", "room", ":roomID", use: optionController.showUsingRoomID)
     app.get("options", ":optionID", use: optionController.showUsingId)
+    app.post("options", "roomid", use: optionController.showUsingRoomID)
     app.post("options", use: optionController.create)
     app.put("options", ":optionID", use: optionController.update)
     app.delete("options", ":optionID", use: optionController.delete)

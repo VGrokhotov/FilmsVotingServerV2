@@ -62,3 +62,7 @@ extension Option {
         """
     }
 }
+
+struct OptionSelector: Codable {
+    let roomID: UUID
+}
