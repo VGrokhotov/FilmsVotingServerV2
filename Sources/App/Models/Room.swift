@@ -27,21 +27,13 @@ final class Room: Model, Content{
     @Field(key: "creatorID")
     var creatorID: UUID
     
-    @Field(key: "isVotingAvailable")
-    var isVotingAvailable: Bool
-    
-    @Field(key: "users")
-    var users: [UUID]
-    
     init() { }
     
-    init(id: UUID? = nil, name: String, password: String, creatorID: UUID, isVotingAvailable: Bool = false, users: [UUID] = []) {
+    init(id: UUID? = nil, name: String, password: String, creatorID: UUID) {
         self.id = id
         self.name = name
         self.password = password
         self.creatorID = creatorID
-        self.isVotingAvailable = isVotingAvailable
-        self.users = users
     }
 }
 
@@ -53,8 +45,6 @@ struct CreateRoom: Migration {
             .field("name", .string)
             .field("password", .string)
             .field("creatorID", .uuid)
-            .field("isVotingAvailable", .bool)
-            .field("users", .array(of: .uuid))
             .create()
     }
 
@@ -67,7 +57,7 @@ struct CreateRoom: Migration {
 extension Room {
     func toStringJSON() -> String {
         return  """
-        {"id": "\(id!)", "name": "\(name)", "password": "\(password)", "creatorID": "\(creatorID)", "isVotingAvailable": \(isVotingAvailable), "users": \(users)}
+        {"id": "\(id!)", "name": "\(name)", "password": "\(password)", "creatorID": "\(creatorID)"}
         """
     }
     
