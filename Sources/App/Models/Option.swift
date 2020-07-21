@@ -58,7 +58,7 @@ struct CreateOption: Migration {
 extension Option {
     func toStringJSON() -> String {
         return  """
-        {"id": "\(id!)", "content": "\(content)", "roomID": "\(roomID)", "vote": "\(vote)"}
+        {"id": "\(id!)", "content": "\(content)", "roomID": "\(roomID)", "vote": \(vote)}
         """
     }
 }
