@@ -109,8 +109,7 @@ final class OptionController {
                 
                 guard
                     let index = string.firstIndex(of: " "),
-                    let roomIDIndex = string.index(after: index),
-                    let roomID = UUID(String(string[index...]))
+                    let roomID = UUID(String(string[string.index(after: index)...]))
                 else { return } // по хорошему надо что-то писать в обратку
                 
                 self.connections.append((ws, roomID))
