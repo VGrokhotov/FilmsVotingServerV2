@@ -106,8 +106,13 @@ final class OptionController {
 
         ws.onText { ws, string in
             if string.starts(with: "Connect, ") {
-                guard let index = string.firstIndex(of: " ") else { return } // по хорошему надо что-то писать в обратку
-                guard let roomID = UUID(String(string[index...])) else { return } // по хорошему надо что-то писать в обратку
+                
+                guard
+                    let index = string.firstIndex(of: " "),
+                    let roomIDIndex = string.index(after: index),
+                    let roomID = UUID(String(string[index...]))
+                else { return } // по хорошему надо что-то писать в обратку
+                
                 self.connections.append((ws, roomID))
             } else if string == "Disconnect" {
                 if let index = self.connections.firstIndex(where: {$0.0 === ws}) {
