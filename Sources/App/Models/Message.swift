@@ -9,7 +9,7 @@ import Foundation
 
 struct Message: Codable {
     let type: MessageType
-    let content: Data
+    let content: Data?
 }
 
 enum MessageType: String, Codable {
