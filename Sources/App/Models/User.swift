@@ -54,14 +54,6 @@ struct CreateUser: Migration {
     }
 }
 
-extension User {
-    func toStringJSON() -> String {
-        return  """
-        {"id": "\(id!)", "name": "\(name)", "password": "\(password)", "login": "\(login)"
-        """
-    }
-}
-
 struct AuthorizationUser: Codable {
     let login: String
     let password: String

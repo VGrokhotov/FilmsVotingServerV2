@@ -35,8 +35,13 @@ final class OptionController {
         let _ = event.map { (option) -> (Option) in
             for (ws, roomID) in SocketController.shared.optionsConnections {
                 if roomID == createdOptionRoomID {
-                    let message = Message(type: .option, content: option.toStringJSON())
-                    ws.send(message.toString())
+                    if let optionData = try? JSONEncoder().encode(option) {
+                        let message = Message(type: .option, content: optionData)
+                        if let messageData = try? JSONEncoder().encode(message) {
+                            ws.send([UInt8](messageData))
+                        }
+                    }
+                    
                 }
             }
             return option

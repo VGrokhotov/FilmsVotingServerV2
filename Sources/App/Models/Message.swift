@@ -9,7 +9,7 @@ import Foundation
 
 struct Message: Codable {
     let type: MessageType
-    let content: String
+    let content: Data
 }
 
 enum MessageType: String, Codable {
@@ -18,12 +18,4 @@ enum MessageType: String, Codable {
     case connectRoom = "connectRoom"
     case connectOption = "connectOption"
     case disconnect = "disconnect"
-}
-
-extension Message {
-    func toString() -> String {
-        return """
-        {"type": "\(type.rawValue)", "content": "\(content)"}
-        """
-    }
 }

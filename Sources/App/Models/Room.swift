@@ -54,22 +54,6 @@ struct CreateRoom: Migration {
     }
 }
 
-extension Room {
-    func toStringJSON() -> String {
-        return  """
-        {"id": "\(id!)", "name": "\(name)", "password": "\(password)", "creatorID": "\(creatorID)"}
-        """
-    }
-    
-    func toNotVerifiedRoomStringJSON() -> String {
-        return  """
-        {"id": "\(id!)", "name": "\(name)"}
-        """
-    }
-}
-
-// MARK: TODO по хорошему нужно гетом отправлять только индификаторы и имя 
-
 struct NotVerifiedRoom: Content {
     let id: UUID?
     let name: String

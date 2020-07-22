@@ -49,8 +49,12 @@ final class RoomController {
         let event = room.create(on: req.db).map { room }
         let _ = event.map { (room) -> (Room) in
             for ws in SocketController.shared.roomsConnections {
-                let message = Message(type: .room, content: room.toNotVerifiedRoomStringJSON())
-                ws.send(message.toString())
+                if let roomData = try? JSONEncoder().encode(room) {
+                    let message = Message(type: .room, content: roomData)
+                    if let messageData = try? JSONEncoder().encode(message) {
+                        ws.send([UInt8](messageData))
+                    }
+                }
             }
             return room
         }

@@ -55,14 +55,6 @@ struct CreateOption: Migration {
     }
 }
 
-extension Option {
-    func toStringJSON() -> String {
-        return  """
-        {"id": "\(id!)", "content": "\(content)", "roomID": "\(roomID)", "vote": \(vote)}
-        """
-    }
-}
-
 struct OptionSelector: Codable {
     let roomID: UUID
 }
