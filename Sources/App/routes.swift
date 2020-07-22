@@ -54,8 +54,6 @@ func routes(_ app: Application) throws {
         +--------+-----------------------+------------------------------------------+
         | DELETE | /rooms/:roomID        | Deletes room by its ID                   |
         +--------+-----------------------+------------------------------------------+
-        | GET    | /rooms/socket         | Connects to rooms websocket              |
-        +--------+-----------------------+------------------------------------------+
         | GET    | /users                | Returns all users with all information   |
         +--------+-----------------------+------------------------------------------+
         | GET    | /users/:userID        | Returns user by its ID                   |
@@ -82,7 +80,7 @@ func routes(_ app: Application) throws {
         +--------+-----------------------+------------------------------------------+
         | DELETE | /options/room/:roomID | Deletes all options by its roomID        |
         +--------+-----------------------+------------------------------------------+
-        | GET    | /options/socket       | Connects to options websocket            |
+        | GET    | /socket               | Connects to websocket            |
         +--------+-----------------------+------------------------------------------+
 
         """
@@ -107,9 +105,6 @@ func routes(_ app: Application) throws {
     //app.put("rooms", ":roomID", use: roomController.update)
     app.delete("rooms", ":roomID", use: roomController.delete)
         .description("Deletes room by its ID")
-    
-    app.webSocket("rooms", "socket", onUpgrade: roomController.onUpgrade)
-        .description("Connects to rooms websocket")
     
     app.get("users", use: userController.all)
         .description("Returns all users with all information")
@@ -139,6 +134,6 @@ func routes(_ app: Application) throws {
     app.delete("options", "room", ":roomID", use: optionController.deleteAllWithRoomID)
         .description("Deletes all options by its roomID")
     
-    app.webSocket("options", "socket", onUpgrade: optionController.onUpgrade)
-        .description("Connects to options websocket")
+    
+    app.webSocket("socket", onUpgrade: SocketController.shared.onUpgrade).description("Connects to websocket")
 }

@@ -12,8 +12,6 @@ import FluentPostgresDriver
 
 final class OptionController {
     
-    var connections: [(WebSocket, UUID)] = []
-    
     //MARK: GET
     
     func all(_ req: Request) throws -> EventLoopFuture<[Option]> {
@@ -35,9 +33,10 @@ final class OptionController {
         let createdOptionRoomID = option.roomID
         let event = option.create(on: req.db).map { option }
         let _ = event.map { (option) -> (Option) in
-            for (ws, roomID) in self.connections {
+            for (ws, roomID) in SocketController.shared.optionsConnections {
                 if roomID == createdOptionRoomID {
-                    ws.send(option.toStringJSON())
+                    let message = Message(type: .option, content: option.toStringJSON())
+                    ws.send(message.toString())
                 }
             }
             return option
@@ -98,27 +97,6 @@ final class OptionController {
                 .transform(to: .ok)
         }
         throw Abort.init(.notFound)
-    }
-    
-    //MARK: WebSocket
-    
-    func onUpgrade(_ req: Request, ws: WebSocket) {
-
-        ws.onText { ws, string in
-            if string.starts(with: "Connect, ") {
-                
-                guard
-                    let index = string.firstIndex(of: " "),
-                    let roomID = UUID(String(string[string.index(after: index)...]))
-                else { return } // по хорошему надо что-то писать в обратку
-                
-                self.connections.append((ws, roomID))
-            } else if string == "Disconnect" {
-                if let index = self.connections.firstIndex(where: {$0.0 === ws}) {
-                    self.connections.remove(at: index)
-                }
-            }
-        }
     }
     
 }
