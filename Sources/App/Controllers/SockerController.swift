@@ -37,6 +37,10 @@ final class SocketController {
                     if let index = self.optionsConnections.firstIndex(where: {$0.0 === ws}) {
                         self.optionsConnections.remove(at: index)
                     }
+                case .disconnectFromOption:
+                    if let index = self.optionsConnections.firstIndex(where: {$0.0 === ws}) {
+                        self.optionsConnections.remove(at: index)
+                    }
                 default:
                     break
                 }

@@ -18,4 +18,5 @@ enum MessageType: String, Codable {
     case connectRoom = "connectRoom"
     case connectOption = "connectOption"
     case disconnect = "disconnect"
+    case disconnectFromOption = "disconnectFromOption"
 }
