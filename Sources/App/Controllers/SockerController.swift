@@ -26,7 +26,8 @@ final class SocketController {
                     self.roomsConnections.append(ws)
                 case .connectOption:
                     guard
-                        let roomID = UUID(uuidString: String(data: message.content, encoding: .utf8) ?? "" )
+                        let roomIDData = message.content,
+                        let roomID = UUID(uuidString: String(data: roomIDData, encoding: .utf8) ?? "" )
                     else { return }
                     
                     self.optionsConnections.append((ws, roomID))
