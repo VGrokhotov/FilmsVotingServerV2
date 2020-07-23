@@ -42,6 +42,22 @@ final class SocketController {
                     if let index = self.optionsConnections.firstIndex(where: {$0.0 === ws}) {
                         self.optionsConnections.remove(at: index)
                     }
+                case .startVoting:
+                    guard
+                        let roomIDData = message.content,
+                        let receivedRoomID = UUID(uuidString: String(data: roomIDData, encoding: .utf8) ?? "" )
+                    else { return }
+                    
+                    for (ws, roomID) in self.optionsConnections {
+                        if roomID == receivedRoomID {
+                            
+                            let message = Message(type: .startVoting, content: nil)
+                            if let messageData = try? JSONEncoder().encode(message) {
+                                ws.send([UInt8](messageData))
+                            }
+                            
+                        }
+                    }
                 default:
                     break
                 }
