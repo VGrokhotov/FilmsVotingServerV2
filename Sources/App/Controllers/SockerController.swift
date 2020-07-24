@@ -48,30 +48,44 @@ final class SocketController {
                         let receivedRoomID = UUID(uuidString: String(data: roomIDData, encoding: .utf8) ?? "" )
                     else { return }
                     
-                    for (ws, roomID) in self.optionsConnections {
-                        if roomID == receivedRoomID {
-                            
-                            let message = Message(type: .startVoting, content: nil)
-                            if let messageData = try? JSONEncoder().encode(message) {
-                                ws.send([UInt8](messageData))
+                    let message = Message(type: .startVoting, content: nil)
+                    if let messageData = try? JSONEncoder().encode(message) {
+                        let sendData = [UInt8](messageData)
+                        for (ws, roomID) in self.optionsConnections {
+                            if roomID == receivedRoomID {
+                                ws.send(sendData)
                             }
-                            
                         }
                     }
+                    
                 case .endVoting:
                     guard
                         let roomIDData = message.content,
                         let receivedRoomID = UUID(uuidString: String(data: roomIDData, encoding: .utf8) ?? "" )
                     else { return }
                     
-                    for (ws, roomID) in self.optionsConnections {
-                        if roomID == receivedRoomID {
-                            
-                            let message = Message(type: .endVoting, content: nil)
-                            if let messageData = try? JSONEncoder().encode(message) {
-                                ws.send([UInt8](messageData))
+                    let message = Message(type: .endVoting, content: nil)
+                    if let messageData = try? JSONEncoder().encode(message) {
+                        let sendData = [UInt8](messageData)
+                        for (ws, roomID) in self.optionsConnections {
+                            if roomID == receivedRoomID {
+                                ws.send(sendData)
                             }
-                            
+                        }
+                    }
+                case .exit:
+                    guard
+                        let roomIDData = message.content,
+                        let receivedRoomID = UUID(uuidString: String(data: roomIDData, encoding: .utf8) ?? "" )
+                    else { return }
+                    
+                    let message = Message(type: .exit, content: nil)
+                    if let messageData = try? JSONEncoder().encode(message) {
+                        let sendData = [UInt8](messageData)
+                        for (ws, roomID) in self.optionsConnections {
+                            if roomID == receivedRoomID {
+                                ws.send(sendData)
+                            }
                         }
                     }
                 default:
