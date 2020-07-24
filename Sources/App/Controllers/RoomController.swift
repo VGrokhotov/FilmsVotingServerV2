@@ -114,6 +114,14 @@ final class RoomController {
             .filter(\.$roomID == roomID.id)
             .delete()
         
+        let message = Message(type: .deletedRoom, content: nil)
+        if let messageData = try? JSONEncoder().encode(message) {
+            let sendData = [UInt8](messageData)
+            for ws in SocketController.shared.roomsConnections {
+                ws.send(sendData)
+            }
+        }
+        
         return room.flatMap { (room) in
             return room.delete(on: req.db)
         }.transform(to: .ok)

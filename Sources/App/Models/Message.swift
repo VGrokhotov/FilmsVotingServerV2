@@ -22,4 +22,5 @@ enum MessageType: String, Codable {
     case startVoting = "startVoting"
     case endVoting = "endVoting"
     case exit = "exit"
+    case deletedRoom = "deletedRoom"
 }
