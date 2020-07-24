@@ -39,37 +39,39 @@ func routes(_ app: Application) throws {
                 var roomID: UUID
 
 
-        +--------+-----------------+------------------------------------------+
-        | GET    | /               |                                          |
-        +--------+-----------------+------------------------------------------+
-        | GET    | /allrooms       | Returns all rooms with all information   |
-        +--------+-----------------+------------------------------------------+
-        | GET    | /rooms          | Returns all rooms with base information  |
-        +--------+-----------------+------------------------------------------+
-        | POST   | /rooms/id       | Returns room by its ID                   |
-        +--------+-----------------+------------------------------------------+
-        | POST   | /rooms          | Creates new room                         |
-        +--------+-----------------+------------------------------------------+
-        | DELETE | /rooms          | Deletes room by its ID                   |
-        +--------+-----------------+------------------------------------------+
-        | GET    | /users          | Returns all users with all information   |
-        +--------+-----------------+------------------------------------------+
-        | POST   | /users          | Creates new user                         |
-        +--------+-----------------+------------------------------------------+
-        | POST   | /users/login    | Returns user by login                    |
-        +--------+-----------------+------------------------------------------+
-        | DELETE | /users          | Deletes user by ID                       |
-        +--------+-----------------+------------------------------------------+
-        | GET    | /options        | Returns all options with all information |
-        +--------+-----------------+------------------------------------------+
-        | POST   | /options/roomid | Returns all options with fixed roomID    |
-        +--------+-----------------+------------------------------------------+
-        | POST   | /options        | Creates new option                       |
-        +--------+-----------------+------------------------------------------+
-        | PUT    | /options        | Updates option by its id                 |
-        +--------+-----------------+------------------------------------------+
-        | GET    | /socket         | Connects to websocket                    |
-        +--------+-----------------+------------------------------------------+
+        +--------+---------------------+------------------------------------------+
+        | GET    | /                   |                                          |
+        +--------+---------------------+------------------------------------------+
+        | GET    | /allrooms           | Returns all rooms with all information   |
+        +--------+---------------------+------------------------------------------+
+        | GET    | /rooms              | Returns all rooms with base information  |
+        +--------+---------------------+------------------------------------------+
+        | POST   | /rooms/id           | Returns room by its ID                   |
+        +--------+---------------------+------------------------------------------+
+        | POST   | /rooms              | Creates new room                         |
+        +--------+---------------------+------------------------------------------+
+        | DELETE | /rooms              | Deletes room by its ID                   |
+        +--------+---------------------+------------------------------------------+
+        | GET    | /users              | Returns all users with all information   |
+        +--------+---------------------+------------------------------------------+
+        | POST   | /users              | Creates new user                         |
+        +--------+---------------------+------------------------------------------+
+        | POST   | /users/login        | Returns user by login                    |
+        +--------+---------------------+------------------------------------------+
+        | DELETE | /users              | Deletes user by ID                       |
+        +--------+---------------------+------------------------------------------+
+        | GET    | /options            | Returns all options with all information |
+        +--------+---------------------+------------------------------------------+
+        | POST   | /options/roomid     | Returns all options with fixed roomID    |
+        +--------+---------------------+------------------------------------------+
+        | POST   | /options/roomid/top | Returns top options with fixed roomID    |
+        +--------+---------------------+------------------------------------------+
+        | POST   | /options            | Creates new option                       |
+        +--------+---------------------+------------------------------------------+
+        | PUT    | /options            | Updates option by its id                 |
+        +--------+---------------------+------------------------------------------+
+        | GET    | /socket             | Connects to websocket                    |
+        +--------+---------------------+------------------------------------------+
 
         """
     }
@@ -113,6 +115,8 @@ func routes(_ app: Application) throws {
 //        .description("Returns option by its ID")
     app.post("options", "roomid", use: optionController.showUsingRoomID)
         .description("Returns all options with fixed roomID")
+    app.post("options", "roomid", "top", use: optionController.showTopUsingRoomID)
+        .description("Returns top options with fixed roomID")
     app.post("options", use: optionController.create)
         .description("Creates new option")
     app.put("options", use: optionController.update)

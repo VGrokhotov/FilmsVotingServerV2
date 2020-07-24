@@ -57,6 +57,14 @@ final class OptionController {
             .filter(\.$roomID == optionSelector.roomID).all()
     }
     
+    func showTopUsingRoomID(_ req: Request) throws -> EventLoopFuture<[Option]> {
+        
+        let optionSelector = try req.content.decode(OptionSelector.self)
+        
+        return Option.query(on: req.db)
+            .filter(\.$roomID == optionSelector.roomID).all()
+    }
+    
     //MARK: PUT
     
     func update(_ req: Request) throws -> EventLoopFuture<Option> {
