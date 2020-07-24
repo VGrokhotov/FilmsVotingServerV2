@@ -65,10 +65,7 @@ final class SocketController {
                         let receivedRoomID = UUID(uuidString: String(data: roomIDData, encoding: .utf8) ?? "" )
                     else { return }
                     
-                    let options = try? Option.query(on: req.db).filter(\.$roomID == receivedRoomID).all().wait()
-                    let optionsData = try? JSONEncoder().encode(options)
-                    
-                    let message = Message(type: .endVoting, content: optionsData)
+                    let message = Message(type: .endVoting, content: nil)
                     if let messageData = try? JSONEncoder().encode(message) {
                         let sendData = [UInt8](messageData)
                         for (ws, roomID) in self.optionsConnections {
