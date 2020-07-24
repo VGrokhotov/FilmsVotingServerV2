@@ -19,12 +19,12 @@ final class UserController {
         return User.query(on: req.db).all()
     }
     
-    func showUsingId(_ req: Request) throws -> EventLoopFuture<User> {
-        if let id = req.parameters.get("userID", as: UUID.self) {
-            return User.find(id, on: req.db).unwrap(or: Abort.init(.notFound))
-        }
-        throw Abort.init(.notFound)
-    }
+//    func showUsingId(_ req: Request) throws -> EventLoopFuture<User> {
+//        if let id = req.parameters.get("userID", as: UUID.self) {
+//            return User.find(id, on: req.db).unwrap(or: Abort.init(.notFound))
+//        }
+//        throw Abort.init(.notFound)
+//    }
     
     
     //MARK: POST
@@ -52,40 +52,40 @@ final class UserController {
     
     //MARK: PUT
     
-    func update(_ req: Request) throws -> EventLoopFuture<User> {
-        
-        if let id = req.parameters.get("userID", as: UUID.self) {
-            
-            let updatedUser = try? req.content.decode(User.self)
-            
-            if let updatedUser = updatedUser{
-                return User.find(id, on: req.db).unwrap(or: Abort.init(.notFound)).map { (user) in
-                    user.name = updatedUser.name
-                    user.password = updatedUser.password
-                    let _ = user.save(on: req.db)
-                    return user
-                }
-            }
-            
-            throw Abort.init(.noContent)
-        }
-        
-        throw Abort.init(.notFound)
-    }
+//    func update(_ req: Request) throws -> EventLoopFuture<User> {
+//        
+//        if let id = req.parameters.get("userID", as: UUID.self) {
+//            
+//            let updatedUser = try? req.content.decode(User.self)
+//            
+//            if let updatedUser = updatedUser{
+//                return User.find(id, on: req.db).unwrap(or: Abort.init(.notFound)).map { (user) in
+//                    user.name = updatedUser.name
+//                    user.password = updatedUser.password
+//                    let _ = user.save(on: req.db)
+//                    return user
+//                }
+//            }
+//            
+//            throw Abort.init(.noContent)
+//        }
+//        
+//        throw Abort.init(.notFound)
+//    }
     
     
     //MARK: DELETE
     
     func delete(_ req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        if let id = req.parameters.get("userID", as: UUID.self) {
-            let user = User.find(id, on: req.db).unwrap(or: Abort.init(.notFound))
+        
+        let userID = try req.content.decode(UserID.self)
+        
+        let user = User.find(userID.id, on: req.db).unwrap(or: Abort.init(.notFound))
+        
+        return user.flatMap { (user) in
+            return user.delete(on: req.db)
+        }.transform(to: .ok)
             
-            return user.flatMap { (user) in
-                return user.delete(on: req.db)
-            }.transform(to: .ok)
-            
-        }
-        throw Abort.init(.notFound)
     }
     
 }

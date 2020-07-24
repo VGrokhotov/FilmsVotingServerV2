@@ -103,15 +103,15 @@ final class RoomController {
     //MARK: DELETE
     
     func delete(_ req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        if let id = req.parameters.get("roomID", as: UUID.self) {
-            let room = Room.find(id, on: req.db).unwrap(or: Abort.init(.notFound))
-            
-            return room.flatMap { (room) in
-                return room.delete(on: req.db)
-            }.transform(to: .ok)
-            
-        }
-        throw Abort.init(.notFound)
+        
+        let roomID = try req.content.decode(RoomID.self)
+        
+        let room = Room.find(roomID.id, on: req.db).unwrap(or: Abort.init(.notFound))
+        
+        return room.flatMap { (room) in
+            return room.delete(on: req.db)
+        }.transform(to: .ok)
+        
     }
     
 }

@@ -18,12 +18,12 @@ final class OptionController {
         return Option.query(on: req.db).all()
     }
     
-    func showUsingId(_ req: Request) throws -> EventLoopFuture<Option> {
-        if let id = req.parameters.get("optionID", as: UUID.self) {
-            return Option.find(id, on: req.db).unwrap(or: Abort.init(.notFound))
-        }
-        throw Abort.init(.notFound)
-    }
+//    func showUsingId(_ req: Request) throws -> EventLoopFuture<Option> {
+//        if let id = req.parameters.get("optionID", as: UUID.self) {
+//            return Option.find(id, on: req.db).unwrap(or: Abort.init(.notFound))
+//        }
+//        throw Abort.init(.notFound)
+//    }
     
     
     //MARK: POST
@@ -61,47 +61,44 @@ final class OptionController {
     
     func update(_ req: Request) throws -> EventLoopFuture<Option> {
         
-        if let id = req.parameters.get("optionID", as: UUID.self) {
-            
-            let updatedOption = try? req.content.decode(Option.self)
-            
-            if let updatedOption = updatedOption{
-                return Option.find(id, on: req.db).unwrap(or: Abort.init(.notFound)).map { (option) in
-                    option.vote = updatedOption.vote
-                    let _ = option.save(on: req.db)
-                    return option
-                }
-            }
-            
-            throw Abort.init(.noContent)
-        }
+        let optionID = try req.content.decode(OptionID.self)
         
-        throw Abort.init(.notFound)
+        return Option
+            .find(optionID.id, on: req.db)
+            .unwrap(or: Abort.init(.notFound))
+            .map { (option) in
+                option.vote += 1
+                let _ = option.save(on: req.db)
+                return option
+            }
+        
     }
     
     
     //MARK: DELETE
     
     func delete(_ req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        if let id = req.parameters.get("optionID", as: UUID.self) {
-            let option = Option.find(id, on: req.db).unwrap(or: Abort.init(.notFound))
-            
-            return option.flatMap { (option) in
-                return option.delete(on: req.db)
-            }.transform(to: .ok)
-            
-        }
-        throw Abort.init(.notFound)
+        
+        let optionID = try req.content.decode(OptionID.self)
+        
+        let option = Option.find(optionID.id, on: req.db).unwrap(or: Abort.init(.notFound))
+        
+        return option.flatMap { (option) in
+            return option.delete(on: req.db)
+        }.transform(to: .ok)
+        
+        
     }
     
     func deleteAllWithRoomID(_ req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        if let roomID = req.parameters.get("roomID", as: UUID.self) {
-            return Option.query(on: req.db)
-                .filter(\.$roomID == roomID)
-                .delete()
-                .transform(to: .ok)
-        }
-        throw Abort.init(.notFound)
+        
+        let optionSelector = try req.content.decode(OptionSelector.self)
+        
+        return Option.query(on: req.db)
+            .filter(\.$roomID == optionSelector.roomID)
+            .delete()
+            .transform(to: .ok)
+        
     }
     
 }

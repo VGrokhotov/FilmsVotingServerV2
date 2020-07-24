@@ -63,3 +63,7 @@ struct AuthorizationRoom: Codable {
     let id: UUID?
     let password: String
 }
+
+struct RoomID: Codable {
+    let id: UUID
+}

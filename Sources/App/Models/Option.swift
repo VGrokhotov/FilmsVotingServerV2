@@ -58,3 +58,7 @@ struct CreateOption: Migration {
 struct OptionSelector: Codable {
     let roomID: UUID
 }
+
+struct OptionID: Codable {
+    let id: UUID
+}

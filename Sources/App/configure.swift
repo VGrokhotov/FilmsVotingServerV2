@@ -11,7 +11,7 @@ public func configure(_ app: Application) throws {
     if let url = Environment.get("DATABASE_URL") {
         try? app.databases.use( .postgres(url: URL(string: url)!), as: .psql)
     } else {
-        app.databases.use( .postgres(hostname: "localhost", username: "vladislav", password: "", database: "filmsvotingv2")!, as: .psql)
+        app.databases.use( .postgres(hostname: "localhost", port: 5435, username: "vladislav", password: "", database: "filmsvotingv2")!, as: .psql)
     }
     
     // Configure migrations
