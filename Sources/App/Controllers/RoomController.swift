@@ -29,17 +29,17 @@ final class RoomController {
         }
     }
     
-    func showUsingName(_ req: Request) throws -> EventLoopFuture<Room>{
-        if let name = req.parameters.get("name", as: String.self) {
-            
-            return Room.query(on: req.db)
-                .filter(\.$name == name)
-                .first()
-                .unwrap(or: Abort.init(.notFound))
-        }
-        
-        throw Abort.init(.notFound)
-    }
+//    func showUsingName(_ req: Request) throws -> EventLoopFuture<Room>{
+//        if let name = req.parameters.get("name", as: String.self) {
+//
+//            return Room.query(on: req.db)
+//                .filter(\.$name == name)
+//                .first()
+//                .unwrap(or: Abort.init(.notFound))
+//        }
+//
+//        throw Abort.init(.notFound)
+//    }
     
     
     //MARK: POST
@@ -109,6 +109,10 @@ final class RoomController {
         let roomID = try req.content.decode(RoomID.self)
         
         let room = Room.find(roomID.id, on: req.db).unwrap(or: Abort.init(.notFound))
+        
+        let _ = Option.query(on: req.db)
+            .filter(\.$roomID == roomID.id)
+            .delete()
         
         return room.flatMap { (room) in
             return room.delete(on: req.db)

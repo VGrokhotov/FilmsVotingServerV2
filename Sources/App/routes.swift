@@ -39,43 +39,37 @@ func routes(_ app: Application) throws {
                 var roomID: UUID
 
 
-        +--------+-------------------+------------------------------------------+
-        | GET    | /                 |                                          |
-        +--------+-------------------+------------------------------------------+
-        | GET    | /allrooms         | Returns all rooms with all information   |
-        +--------+-------------------+------------------------------------------+
-        | GET    | /rooms            | Returns all rooms with base information  |
-        +--------+-------------------+------------------------------------------+
-        | GET    | /rooms/name/:name | Returns room by its name                 |
-        +--------+-------------------+------------------------------------------+
-        | POST   | /rooms/id         | Returns room by its ID                   |
-        +--------+-------------------+------------------------------------------+
-        | POST   | /rooms            | Creates new room                         |
-        +--------+-------------------+------------------------------------------+
-        | DELETE | /rooms            | Deletes room by its ID                   |
-        +--------+-------------------+------------------------------------------+
-        | GET    | /users            | Returns all users with all information   |
-        +--------+-------------------+------------------------------------------+
-        | POST   | /users            | Creates new user                         |
-        +--------+-------------------+------------------------------------------+
-        | POST   | /users/login      | Returns user by its login                |
-        +--------+-------------------+------------------------------------------+
-        | DELETE | /users            | Deletes user by its ID                   |
-        +--------+-------------------+------------------------------------------+
-        | GET    | /options          | Returns all options with all information |
-        +--------+-------------------+------------------------------------------+
-        | POST   | /options/roomid   | Returns all options with fixed roomID    |
-        +--------+-------------------+------------------------------------------+
-        | POST   | /options          | Creates new option                       |
-        +--------+-------------------+------------------------------------------+
-        | PUT    | /options          | Updates option by its id                 |
-        +--------+-------------------+------------------------------------------+
-        | DELETE | /options          | Deletes option by its ID                 |
-        +--------+-------------------+------------------------------------------+
-        | DELETE | /options/room     | Deletes all options by its roomID        |
-        +--------+-------------------+------------------------------------------+
-        | GET    | /socket           | Connects to websocket                    |
-        +--------+-------------------+------------------------------------------+
+        +--------+-----------------+------------------------------------------+
+        | GET    | /               |                                          |
+        +--------+-----------------+------------------------------------------+
+        | GET    | /allrooms       | Returns all rooms with all information   |
+        +--------+-----------------+------------------------------------------+
+        | GET    | /rooms          | Returns all rooms with base information  |
+        +--------+-----------------+------------------------------------------+
+        | POST   | /rooms/id       | Returns room by its ID                   |
+        +--------+-----------------+------------------------------------------+
+        | POST   | /rooms          | Creates new room                         |
+        +--------+-----------------+------------------------------------------+
+        | DELETE | /rooms          | Deletes room by its ID                   |
+        +--------+-----------------+------------------------------------------+
+        | GET    | /users          | Returns all users with all information   |
+        +--------+-----------------+------------------------------------------+
+        | POST   | /users          | Creates new user                         |
+        +--------+-----------------+------------------------------------------+
+        | POST   | /users/login    | Returns user by login                    |
+        +--------+-----------------+------------------------------------------+
+        | DELETE | /users          | Deletes user by ID                       |
+        +--------+-----------------+------------------------------------------+
+        | GET    | /options        | Returns all options with all information |
+        +--------+-----------------+------------------------------------------+
+        | POST   | /options/roomid | Returns all options with fixed roomID    |
+        +--------+-----------------+------------------------------------------+
+        | POST   | /options        | Creates new option                       |
+        +--------+-----------------+------------------------------------------+
+        | PUT    | /options        | Updates option by its id                 |
+        +--------+-----------------+------------------------------------------+
+        | GET    | /socket         | Connects to websocket                    |
+        +--------+-----------------+------------------------------------------+
 
         """
     }
@@ -90,8 +84,8 @@ func routes(_ app: Application) throws {
         .description("Returns all rooms with all information")
     app.get("rooms", use: roomController.allWithoutValidation)
         .description("Returns all rooms with base information")
-    app.get("rooms", "name", ":name", use: roomController.showUsingName)
-        .description("Returns room by its name")
+//    app.get("rooms", "name", ":name", use: roomController.showUsingName)
+//        .description("Returns room by its name")
     app.post("rooms", "id", use: roomController.showUsingId)
         .description("Returns room by its ID")
     app.post("rooms", use: roomController.create)
@@ -107,11 +101,11 @@ func routes(_ app: Application) throws {
     app.post("users", use: userController.create)
         .description("Creates new user")
     app.post("users", "login", use: userController.showUsingLogin)
-        .description("Returns user by its login")
+        .description("Returns user by login")
 //    app.put("users", ":userID", use: userController.update)
 //        .description("Updates user by its id")
     app.delete("users", use: userController.delete)
-        .description("Deletes user by its ID")
+        .description("Deletes user by ID")
     
     app.get("options", use: optionController.all)
         .description("Returns all options with all information")
@@ -123,10 +117,10 @@ func routes(_ app: Application) throws {
         .description("Creates new option")
     app.put("options", use: optionController.update)
         .description("Updates option by its id")
-    app.delete("options", use: optionController.delete)
-        .description("Deletes option by its ID")
-    app.delete("options", "room", use: optionController.deleteAllWithRoomID)
-        .description("Deletes all options by its roomID")
+//    app.delete("options", use: optionController.delete)
+//        .description("Deletes option by its ID")
+//    app.delete("options", "room", use: optionController.deleteAllWithRoomID)
+//        .description("Deletes all options by its roomID")
     
     
     app.webSocket("socket", onUpgrade: SocketController.shared.onUpgrade).description("Connects to websocket")

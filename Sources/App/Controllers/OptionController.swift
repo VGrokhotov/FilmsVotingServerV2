@@ -75,31 +75,31 @@ final class OptionController {
     }
     
     
-    //MARK: DELETE
-    
-    func delete(_ req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        
-        let optionID = try req.content.decode(OptionID.self)
-        
-        let option = Option.find(optionID.id, on: req.db).unwrap(or: Abort.init(.notFound))
-        
-        return option.flatMap { (option) in
-            return option.delete(on: req.db)
-        }.transform(to: .ok)
-        
-        
-    }
-    
-    func deleteAllWithRoomID(_ req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        
-        let optionSelector = try req.content.decode(OptionSelector.self)
-        
-        return Option.query(on: req.db)
-            .filter(\.$roomID == optionSelector.roomID)
-            .delete()
-            .transform(to: .ok)
-        
-    }
+//    //MARK: DELETE
+//    
+//    func delete(_ req: Request) throws -> EventLoopFuture<HTTPStatus> {
+//        
+//        let optionID = try req.content.decode(OptionID.self)
+//        
+//        let option = Option.find(optionID.id, on: req.db).unwrap(or: Abort.init(.notFound))
+//        
+//        return option.flatMap { (option) in
+//            return option.delete(on: req.db)
+//        }.transform(to: .ok)
+//        
+//        
+//    }
+//    
+//    func deleteAllWithRoomID(_ req: Request) throws -> EventLoopFuture<HTTPStatus> {
+//        
+//        let optionSelector = try req.content.decode(OptionSelector.self)
+//        
+//        return Option.query(on: req.db)
+//            .filter(\.$roomID == optionSelector.roomID)
+//            .delete()
+//            .transform(to: .ok)
+//        
+//    }
     
 }
 
