@@ -7,6 +7,7 @@
 
 import Foundation
 import Vapor
+import Fluent
 
 final class SocketController {
     
@@ -64,7 +65,10 @@ final class SocketController {
                         let receivedRoomID = UUID(uuidString: String(data: roomIDData, encoding: .utf8) ?? "" )
                     else { return }
                     
-                    let message = Message(type: .endVoting, content: nil)
+                    let options = try? Option.query(on: req.db).filter(\.$roomID == receivedRoomID).all().wait()
+                    let optionsData = try? JSONEncoder().encode(options)
+                    
+                    let message = Message(type: .endVoting, content: optionsData)
                     if let messageData = try? JSONEncoder().encode(message) {
                         let sendData = [UInt8](messageData)
                         for (ws, roomID) in self.optionsConnections {
