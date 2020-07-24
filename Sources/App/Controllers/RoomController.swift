@@ -48,14 +48,16 @@ final class RoomController {
         let room = try req.content.decode(Room.self)
         let event = room.create(on: req.db).map { room }
         let _ = event.map { (room) -> (Room) in
-            for ws in SocketController.shared.roomsConnections {
-                if let roomData = try? JSONEncoder().encode(room) {
-                    let message = Message(type: .room, content: roomData)
-                    if let messageData = try? JSONEncoder().encode(message) {
-                        ws.send([UInt8](messageData))
+            if let roomData = try? JSONEncoder().encode(room) {
+                let message = Message(type: .room, content: roomData)
+                if let messageData = try? JSONEncoder().encode(message) {
+                    let sendData = [UInt8](messageData)
+                    for ws in SocketController.shared.roomsConnections {
+                        ws.send(sendData)
                     }
                 }
             }
+            
             return room
         }
         return event

@@ -33,15 +33,15 @@ final class OptionController {
         let createdOptionRoomID = option.roomID
         let event = option.create(on: req.db).map { option }
         let _ = event.map { (option) -> (Option) in
-            for (ws, roomID) in SocketController.shared.optionsConnections {
-                if roomID == createdOptionRoomID {
-                    if let optionData = try? JSONEncoder().encode(option) {
-                        let message = Message(type: .option, content: optionData)
-                        if let messageData = try? JSONEncoder().encode(message) {
-                            ws.send([UInt8](messageData))
+            if let optionData = try? JSONEncoder().encode(option) {
+                let message = Message(type: .option, content: optionData)
+                if let messageData = try? JSONEncoder().encode(message) {
+                    let sendData = [UInt8](messageData)
+                    for (ws, roomID) in SocketController.shared.optionsConnections {
+                        if roomID == createdOptionRoomID {
+                            ws.send(sendData)
                         }
                     }
-                    
                 }
             }
             return option
